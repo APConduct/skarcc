@@ -852,10 +852,14 @@ impl BitwiseReverse for N8 {
 
 impl BitwiseRotate for N8 {
     fn rotate_left(&mut self, n: u32) {
-        self.bits.rotate_left(n as usize % 8);
+        let val = u8::from(*self);
+        let rotated = val.rotate_left(n);
+        *self = rotated.into();
     }
     fn rotate_right(&mut self, n: u32) {
-        self.bits.rotate_right(n as usize % 8);
+        let val = u8::from(*self);
+        let rotated = val.rotate_right(n);
+        *self = rotated.into();
     }
 }
 
