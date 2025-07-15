@@ -1,3 +1,11 @@
+
+//! karcc - Bitwise and numeric types for custom arithmetic and logic operations.
+//!
+//! This module provides custom types for bits, bytes, nibbles, words, and various
+//! signed/unsigned/floating-point numbers, along with bitwise and arithmetic operations.
+//! The types are implemented using arrays of `Bit` and provide operator overloading
+//! for arithmetic and logic, as well as conversion to/from primitive Rust types.
+
 use std::{
     cmp::Ordering,
     fmt::{self, Display, Formatter},
@@ -8,20 +16,29 @@ use std::{
     str::FromStr,
 };
 
+/// Trait for counting ones and zeros in a bit sequence.
 pub trait BitCount {
+    /// Returns the number of ones in the bit sequence.
     fn count_ones(&self) -> u32;
+    /// Returns the number of zeros in the bit sequence.
     fn count_zeros(&self) -> u32;
 }
 
+/// Trait for rotating bits left and right.
 pub trait BitwiseRotate {
+    /// Rotates bits to the left by `n` positions.
     fn rotate_left(&mut self, n: u32);
+    /// Rotates bits to the right by `n` positions.
     fn rotate_right(&mut self, n: u32);
 }
 
+/// Trait for reversing the order of bits.
 pub trait BitwiseReverse {
+    /// Reverses the order of bits in the sequence.
     fn reverse_bits(&mut self);
 }
 
+/// Represents a single bit (0 or 1).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Bit {
     Zero,
@@ -63,6 +80,7 @@ impl Display for Bit {
 }
 
 impl Bit {
+    /// Converts the bit to a `Bool`.
     pub fn as_bool(&self) -> Bool {
         match self {
             Bit::Zero => Bool::False,
@@ -70,6 +88,7 @@ impl Bit {
         }
     }
 
+    /// Creates a `Bit` from a `Bool`.
     pub fn from_bool(value: Bool) -> Bit {
         match value {
             Bool::False => Bit::Zero,
@@ -77,6 +96,7 @@ impl Bit {
         }
     }
 
+    /// Returns `Bool::True` if the bit is zero.
     pub fn is_zero(&self) -> Bool {
         match self {
             Bit::Zero => Bool::True,
@@ -84,6 +104,7 @@ impl Bit {
         }
     }
 
+    /// Returns `Bool::True` if the bit is one.
     pub fn is_one(&self) -> Bool {
         match self {
             Bit::Zero => Bool::False,
@@ -91,6 +112,7 @@ impl Bit {
         }
     }
 
+    /// Compares two bits for equality, returning a `Bool`.
     pub fn is(&self, other: &Bit) -> Bool {
         match (self, other) {
             (Bit::Zero, Bit::Zero) => Bool::True,
@@ -99,6 +121,7 @@ impl Bit {
         }
     }
 
+    /// Bitwise OR operation.
     pub fn or(&self, other: &Bit) -> Bit {
         match (self, other) {
             (Bit::Zero, Bit::Zero) => Bit::Zero,
@@ -108,6 +131,7 @@ impl Bit {
         }
     }
 
+    /// Bitwise AND operation.
     pub fn and(&self, other: &Bit) -> Bit {
         match (self, other) {
             (Bit::Zero, Bit::Zero) => Bit::Zero,
@@ -117,6 +141,7 @@ impl Bit {
         }
     }
 
+    /// Bitwise XOR operation.
     pub fn xor(&self, other: &Bit) -> Bit {
         match (self, other) {
             (Bit::Zero, Bit::Zero) => Bit::Zero,
@@ -198,19 +223,23 @@ impl std::ops::BitOr for Bit {
 }
 
 impl Bit {
+    /// Bitwise NAND operation.
     pub fn nand(&self, other: &Bit) -> Bit {
         self.and(other).not()
     }
 
+    /// Bitwise NOR operation.
     pub fn nor(&self, other: &Bit) -> Bit {
         self.or(other).not()
     }
 
+    /// Bitwise XNOR operation.
     pub fn xnor(&self, other: &Bit) -> Bit {
         self.xor(other).not()
     }
 }
 
+/// Represents a byte (8 bits).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Byte {
     bits: [Bit; 8],
@@ -235,22 +264,27 @@ impl fmt::Binary for Byte {
 }
 
 impl Byte {
+    /// Creates a new `Byte` from an array of 8 bits.
     pub fn new(bits: [Bit; 8]) -> Self {
         Byte { bits }
     }
 
+    /// Gets the bit at the specified index.
     pub fn get_bit(&self, index: usize) -> Bit {
         self.bits[index]
     }
 
+    /// Sets the bit at the specified index.
     pub fn set_bit(&mut self, index: usize, bit: Bit) {
         self.bits[index] = bit;
     }
 
+    /// Returns a reference to the underlying bits.
     pub fn get_bits(&self) -> &[Bit; 8] {
         &self.bits
     }
 
+    /// Inverts all bits in the byte.
     pub fn invert(&mut self) {
         for bit in &mut self.bits {
             *bit = bit.not()
@@ -289,6 +323,7 @@ impl FromIterator<Bit> for Byte {
 }
 
 impl Byte {
+    /// Bitwise AND with another byte.
     pub fn and(&self, other: &Byte) -> Byte {
         let mut result = [Bit::Zero; 8];
         for i in 0..8 {
@@ -297,6 +332,7 @@ impl Byte {
         Byte { bits: result }
     }
 
+    /// Bitwise OR with another byte.
     pub fn or(&self, other: &Byte) -> Byte {
         let mut result = [Bit::Zero; 8];
         for i in 0..8 {
@@ -305,6 +341,7 @@ impl Byte {
         Byte { bits: result }
     }
 
+    /// Bitwise XOR with another byte.
     pub fn xor(&self, other: &Byte) -> Byte {
         let mut result = [Bit::Zero; 8];
         for i in 0..8 {
@@ -359,6 +396,7 @@ impl Shr<u8> for Byte {
 }
 
 impl Byte {
+    /// Rotates bits to the left by `n` positions.
     pub fn rotate_left(&self, n: usize) -> Byte {
         let mut result = [Bit::Zero; 8];
         let n = n % 8;
@@ -368,6 +406,7 @@ impl Byte {
         Byte { bits: result }
     }
 
+    /// Rotates bits to the right by `n` positions.
     pub fn rotate_right(&self, n: usize) -> Byte {
         let mut result = [Bit::Zero; 8];
         let n = n % 8;
@@ -390,6 +429,7 @@ impl std::ops::BitOr for Byte {
     }
 }
 
+/// Boolean type for logic operations.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Bool {
     True,
@@ -406,10 +446,12 @@ impl Display for Bool {
 }
 
 impl Bool {
+    /// Creates a `Bool` from a primitive `bool`.
     pub fn new(value: bool) -> Bool {
         if value { Bool::True } else { Bool::False }
     }
 
+    /// Logical NOT.
     pub fn not(&self) -> Bool {
         match self {
             Bool::True => Bool::False,
@@ -417,6 +459,7 @@ impl Bool {
         }
     }
 
+    /// Logical AND.
     pub fn and(&self, other: &Bool) -> Bool {
         match (self, other) {
             (Bool::True, Bool::True) => Bool::True,
@@ -424,6 +467,7 @@ impl Bool {
         }
     }
 
+    /// Logical OR.
     pub fn or(&self, other: &Bool) -> Bool {
         match (self, other) {
             (Bool::True, _) | (_, Bool::True) => Bool::True,
@@ -431,6 +475,7 @@ impl Bool {
         }
     }
 
+    /// Logical XOR.
     pub fn xor(&self, other: &Bool) -> Bool {
         match (self, other) {
             (Bool::True, Bool::False) | (Bool::False, Bool::True) => Bool::True,
@@ -483,24 +528,29 @@ impl std::ops::BitXor for Bool {
     }
 }
 
+/// Represents a nibble (4 bits).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Nibble {
     bits: [Bit; 4],
 }
 
 impl Nibble {
+    /// Creates a new `Nibble` from an array of 4 bits.
     pub fn new(bits: [Bit; 4]) -> Self {
         Nibble { bits }
     }
 
+    /// Maximum value for a nibble (0b1111).
     pub const MAX: Nibble = Nibble {
         bits: [Bit::One, Bit::One, Bit::One, Bit::One],
     };
 
+    /// Zero value for a nibble (0b0000).
     pub const ZERO: Nibble = Nibble {
         bits: [Bit::Zero, Bit::Zero, Bit::Zero, Bit::Zero],
     };
 
+    /// One value for a nibble (0b0001).
     pub const ONE: Nibble = Nibble {
         bits: [Bit::Zero, Bit::Zero, Bit::Zero, Bit::One],
     };
@@ -639,6 +689,7 @@ impl ShrAssign<u8> for Nibble {
     }
 }
 
+/// Represents a word (16 bits).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Word {
     bits: [Bit; 16],
@@ -656,12 +707,14 @@ impl ShrAssign<u8> for Byte {
     }
 }
 
+/// Either type for holding one of two possible values.
 pub enum Either<L, R> {
     Left(L),
     Right(R),
 }
 
 impl<L, R> Either<L, R> {
+    /// Maps the left value using the provided function.
     pub fn map_left<F, T>(self, f: F) -> Either<T, R>
     where
         F: FnOnce(L) -> T,
@@ -672,6 +725,7 @@ impl<L, R> Either<L, R> {
         }
     }
 
+    /// Maps the right value using the provided function.
     pub fn map_right<F, T>(self, f: F) -> Either<L, T>
     where
         F: FnOnce(R) -> T,
@@ -691,17 +745,21 @@ impl Mul for Bit {
     }
 }
 
-// unsigned 8-bit integer
+// -------------------- N8 --------------------
+
+/// Unsigned 8-bit integer.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct N8 {
     bits: [Bit; 8],
 }
 
 impl N8 {
+    /// Creates a new `N8` from an array of 8 bits.
     pub fn new(bits: [Bit; 8]) -> Self {
         N8 { bits }
     }
 
+    /// Maximum value for N8 (0xFF).
     pub const MAX: N8 = N8 {
         bits: [
             Bit::One,
@@ -715,12 +773,15 @@ impl N8 {
         ],
     };
 
+    /// Minimum value for N8 (0).
     pub const MIN: N8 = Self::ZERO;
 
+    /// Zero value for N8.
     pub const ZERO: N8 = N8 {
         bits: [Bit::Zero; 8],
     };
 
+    /// One value for N8.
     pub const ONE: N8 = N8::from_u8(1);
     pub const TWO: N8 = N8::from_u8(2);
     pub const THREE: N8 = N8::from_u8(3);
@@ -761,6 +822,7 @@ impl ShrAssign<u8> for N8 {
     }
 }
 
+/// Full adder for single bits.
 fn full_adder(a: Bit, b: Bit, carry: Bit) -> (Bit, Bit) {
     let sum = a ^ b ^ carry;
     let new_carry = (a & b) | (a & carry) | (b & carry);
@@ -815,6 +877,7 @@ impl From<N8> for u8 {
 }
 
 impl N8 {
+    /// Creates a `N8` from a primitive `u8` (const).
     pub const fn from_u8(value: u8) -> Self {
         let mut bits = [Bit::Zero; 8];
         let mut i = 0;
@@ -829,10 +892,12 @@ impl N8 {
         N8 { bits }
     }
 
+    /// Creates a new `N8` from an array of 8 bits.
     pub fn new_from_bits(bits: [Bit; 8]) -> Self {
         N8 { bits }
     }
 
+    /// Returns the value as a `Byte`.
     pub fn as_byte(&self) -> Byte {
         Byte { bits: self.bits }
     }
@@ -885,6 +950,7 @@ impl FromStr for N8 {
     }
 }
 
+/// Full subtractor for single bits.
 fn full_subtractor(a: Bit, b: Bit, borrow: Bit) -> (Bit, Bit) {
     let diff = a ^ b ^ borrow;
     let new_borrow = (b & !a) | (borrow & !(a ^ b));
@@ -948,6 +1014,7 @@ impl Display for N8 {
 
 // -------------------- N16 --------------------
 
+/// Unsigned 16-bit integer.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct N16 {
     bits: [Bit; 16],
@@ -1064,9 +1131,11 @@ impl Ord for N16 {
 }
 
 impl N16 {
+    /// Creates a new `N16` from an array of 16 bits.
     pub fn new(bits: [Bit; 16]) -> Self {
         N16 { bits }
     }
+    /// Returns a zero value for N16.
     pub fn zero() -> Self {
         N16 {
             bits: [Bit::Zero; 16],
@@ -1097,15 +1166,18 @@ impl Display for N16 {
 
 // ---------------- N32 --------------------
 
+/// Unsigned 32-bit integer.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct N32 {
     bits: [Bit; 32],
 }
 
 impl N32 {
+    /// Creates a new `N32` from an array of 32 bits.
     pub fn new(bits: [Bit; 32]) -> Self {
         N32 { bits }
     }
+    /// Returns a zero value for N32.
     pub fn zero() -> Self {
         N32 {
             bits: [Bit::Zero; 32],
@@ -1224,7 +1296,7 @@ impl RemAssign for N32 {
 
 // ---------------- N64 --------------------
 
-// Unsigned 64-bit integer
+/// Unsigned 64-bit integer.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct N64 {
     bits: [Bit; 64],
@@ -1306,7 +1378,7 @@ impl Display for N64 {
 
 // --------------------- Z8 ---------------------
 
-// Signed 8-bit integer
+/// Signed 8-bit integer.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Z8 {
     bits: [Bit; 8],
@@ -1386,7 +1458,7 @@ impl Display for Z8 {
 
 // --------------------- Z16 ---------------------
 
-// Signed 16-bit integer
+/// Signed 16-bit integer.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Z16 {
     bits: [Bit; 16],
@@ -1466,7 +1538,7 @@ impl Display for Z16 {
 
 // --------------------- Z32 ---------------------
 
-// Signed 32-bit integer
+/// Signed 32-bit integer.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Z32 {
     bits: [Bit; 32],
@@ -1546,7 +1618,7 @@ impl Display for Z32 {
 
 // --------------------- Z64 ---------------------
 
-// Signed 64-bit integer
+/// Signed 64-bit integer.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Z64 {
     bits: [Bit; 64],
@@ -1626,7 +1698,7 @@ impl Display for Z64 {
 
 // --------------------- R32 ---------------------
 
-// 32-bit floating-point number
+/// 32-bit floating-point number.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct R32 {
     bits: [Bit; 32],
@@ -1700,7 +1772,7 @@ impl Display for R32 {
 
 // --------------------- R64 ---------------------
 
-// 64-bit floating-point number
+/// 64-bit floating-point number.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct R64 {
     bits: [Bit; 64],
