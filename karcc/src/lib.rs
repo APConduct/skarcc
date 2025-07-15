@@ -38,23 +38,23 @@ impl From<Bit> for u8 {
 }
 
 impl PartialOrd for Bit {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
 
 impl Ord for Bit {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+    fn cmp(&self, other: &Self) -> Ordering {
         match (self, other) {
-            (Bit::Zero, Bit::Zero) | (Bit::One, Bit::One) => std::cmp::Ordering::Equal,
-            (Bit::Zero, Bit::One) => std::cmp::Ordering::Less,
-            (Bit::One, Bit::Zero) => std::cmp::Ordering::Greater,
+            (Bit::Zero, Bit::Zero) | (Bit::One, Bit::One) => Ordering::Equal,
+            (Bit::Zero, Bit::One) => Ordering::Less,
+            (Bit::One, Bit::Zero) => Ordering::Greater,
         }
     }
 }
 
-impl std::fmt::Display for Bit {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl Display for Bit {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Bit::Zero => write!(f, "0"),
             Bit::One => write!(f, "1"),
@@ -178,7 +178,7 @@ impl std::ops::BitXorAssign for Bit {
     }
 }
 
-impl std::ops::Not for Bit {
+impl Not for Bit {
     type Output = Bit;
 
     fn not(self) -> Self::Output {
@@ -216,8 +216,8 @@ pub struct Byte {
     bits: [Bit; 8],
 }
 
-impl std::fmt::Display for Byte {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl Display for Byte {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         for bit in self.bits.iter().rev() {
             write!(f, "{}", bit)?;
         }
@@ -225,8 +225,8 @@ impl std::fmt::Display for Byte {
     }
 }
 
-impl std::fmt::Binary for Byte {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl fmt::Binary for Byte {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         for bit in self.bits.iter().rev() {
             write!(f, "{}", bit)?;
         }
@@ -314,7 +314,7 @@ impl Byte {
     }
 }
 
-impl std::ops::Not for Byte {
+impl Not for Byte {
     type Output = Byte;
 
     fn not(self) -> Self::Output {
@@ -326,7 +326,7 @@ impl std::ops::Not for Byte {
     }
 }
 
-impl std::ops::Shl<u8> for Byte {
+impl Shl<u8> for Byte {
     type Output = Byte;
 
     fn shl(self, shift: u8) -> Self::Output {
@@ -342,7 +342,7 @@ impl std::ops::Shl<u8> for Byte {
     }
 }
 
-impl std::ops::Shr<u8> for Byte {
+impl Shr<u8> for Byte {
     type Output = Byte;
 
     fn shr(self, shift: u8) -> Self::Output {
@@ -396,8 +396,8 @@ pub enum Bool {
     False,
 }
 
-impl std::fmt::Display for Bool {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl Display for Bool {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Bool::True => write!(f, "true"),
             Bool::False => write!(f, "false"),
@@ -407,11 +407,7 @@ impl std::fmt::Display for Bool {
 
 impl Bool {
     pub fn new(value: bool) -> Bool {
-        if value {
-            Bool::True
-        } else {
-            Bool::False
-        }
+        if value { Bool::True } else { Bool::False }
     }
 
     pub fn not(&self) -> Bool {
@@ -443,7 +439,7 @@ impl Bool {
     }
 }
 
-impl std::ops::Not for Bool {
+impl Not for Bool {
     type Output = Bool;
 
     fn not(self) -> Self::Output {
@@ -510,7 +506,7 @@ impl Nibble {
     };
 }
 
-impl std::ops::Not for Nibble {
+impl Not for Nibble {
     type Output = Nibble;
 
     fn not(self) -> Self::Output {
@@ -580,8 +576,8 @@ impl std::ops::BitOrAssign for Nibble {
     }
 }
 
-impl std::fmt::Display for Nibble {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl Display for Nibble {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         for bit in self.bits.iter().rev() {
             write!(f, "{}", bit)?;
         }
@@ -599,7 +595,7 @@ impl FromIterator<Bit> for Nibble {
     }
 }
 
-impl std::ops::Shl<u8> for Nibble {
+impl Shl<u8> for Nibble {
     type Output = Nibble;
 
     fn shl(self, shift: u8) -> Self::Output {
@@ -615,7 +611,7 @@ impl std::ops::Shl<u8> for Nibble {
     }
 }
 
-impl std::ops::Shr<u8> for Nibble {
+impl Shr<u8> for Nibble {
     type Output = Nibble;
 
     fn shr(self, shift: u8) -> Self::Output {
@@ -631,13 +627,13 @@ impl std::ops::Shr<u8> for Nibble {
     }
 }
 
-impl std::ops::ShlAssign<u8> for Nibble {
+impl ShlAssign<u8> for Nibble {
     fn shl_assign(&mut self, shift: u8) {
         *self = *self << shift;
     }
 }
 
-impl std::ops::ShrAssign<u8> for Nibble {
+impl ShrAssign<u8> for Nibble {
     fn shr_assign(&mut self, shift: u8) {
         *self = *self >> shift;
     }
@@ -648,13 +644,13 @@ pub struct Word {
     bits: [Bit; 16],
 }
 
-impl std::ops::ShlAssign<u8> for Byte {
+impl ShlAssign<u8> for Byte {
     fn shl_assign(&mut self, shift: u8) {
         *self = *self << shift;
     }
 }
 
-impl std::ops::ShrAssign<u8> for Byte {
+impl ShrAssign<u8> for Byte {
     fn shr_assign(&mut self, shift: u8) {
         *self = *self >> shift;
     }
@@ -687,7 +683,7 @@ impl<L, R> Either<L, R> {
     }
 }
 
-impl std::ops::Mul for Bit {
+impl Mul for Bit {
     type Output = Bit;
 
     fn mul(self, rhs: Self) -> Self::Output {
@@ -708,7 +704,14 @@ impl N8 {
 
     pub const MAX: N8 = N8 {
         bits: [
-            Bit::One, Bit::One, Bit::One, Bit::One, Bit::One, Bit::One, Bit::One, Bit::One,
+            Bit::One,
+            Bit::One,
+            Bit::One,
+            Bit::One,
+            Bit::One,
+            Bit::One,
+            Bit::One,
+            Bit::One,
         ],
     };
 
@@ -746,13 +749,13 @@ impl Shr<u8> for N8 {
     }
 }
 
-impl std::ops::ShlAssign<u8> for N8 {
+impl ShlAssign<u8> for N8 {
     fn shl_assign(&mut self, shift: u8) {
         *self = *self << shift;
     }
 }
 
-impl std::ops::ShrAssign<u8> for N8 {
+impl ShrAssign<u8> for N8 {
     fn shr_assign(&mut self, shift: u8) {
         *self = *self >> shift;
     }
@@ -764,7 +767,7 @@ fn full_adder(a: Bit, b: Bit, carry: Bit) -> (Bit, Bit) {
     (sum, new_carry)
 }
 
-impl std::ops::Add for N8 {
+impl Add for N8 {
     type Output = N8;
 
     fn add(self, other: N8) -> N8 {
@@ -779,7 +782,7 @@ impl std::ops::Add for N8 {
     }
 }
 
-impl std::ops::AddAssign for N8 {
+impl AddAssign for N8 {
     fn add_assign(&mut self, other: N8) {
         *self = *self + other;
     }
@@ -888,7 +891,7 @@ fn full_subtractor(a: Bit, b: Bit, borrow: Bit) -> (Bit, Bit) {
     (diff, new_borrow)
 }
 
-impl std::ops::Sub for N8 {
+impl Sub for N8 {
     type Output = N8;
 
     fn sub(self, other: N8) -> N8 {
@@ -904,24 +907,24 @@ impl std::ops::Sub for N8 {
 }
 
 impl PartialOrd for N8 {
-    fn partial_cmp(&self, other: &N8) -> Option<std::cmp::Ordering> {
+    fn partial_cmp(&self, other: &N8) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
 
 impl Ord for N8 {
-    fn cmp(&self, other: &N8) -> std::cmp::Ordering {
+    fn cmp(&self, other: &N8) -> Ordering {
         u8::from(*self).cmp(&u8::from(*other))
     }
 }
 
-impl std::ops::SubAssign for N8 {
+impl SubAssign for N8 {
     fn sub_assign(&mut self, other: N8) {
         *self = *self - other;
     }
 }
 
-impl std::ops::Mul for N8 {
+impl Mul for N8 {
     type Output = N8;
 
     fn mul(self, other: N8) -> N8 {
@@ -929,7 +932,7 @@ impl std::ops::Mul for N8 {
     }
 }
 
-impl std::ops::Div for N8 {
+impl Div for N8 {
     type Output = N8;
 
     fn div(self, other: N8) -> N8 {
@@ -938,7 +941,7 @@ impl std::ops::Div for N8 {
 }
 
 impl Display for N8 {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "{}", u8::from(*self))
     }
 }
@@ -976,35 +979,35 @@ impl From<N16> for u16 {
     }
 }
 
-impl std::ops::Sub for N16 {
+impl Sub for N16 {
     type Output = N16;
 
     fn sub(self, other: N16) -> N16 {
-        (u16::from(self).wrapping_sub(u16::from(other))).into()
+        u16::from(self).wrapping_sub(u16::from(other)).into()
     }
 }
 
-impl std::ops::SubAssign for N16 {
+impl SubAssign for N16 {
     fn sub_assign(&mut self, other: N16) {
         *self = *self - other;
     }
 }
 
-impl std::ops::Add for N16 {
+impl Add for N16 {
     type Output = N16;
 
     fn add(self, other: N16) -> N16 {
-        (u16::from(self).wrapping_add(u16::from(other))).into()
+        u16::from(self).wrapping_add(u16::from(other)).into()
     }
 }
 
-impl std::ops::AddAssign for N16 {
+impl AddAssign for N16 {
     fn add_assign(&mut self, other: N16) {
         *self = *self + other;
     }
 }
 
-impl std::ops::Mul for N16 {
+impl Mul for N16 {
     type Output = N32;
 
     fn mul(self, other: N16) -> N32 {
@@ -1040,7 +1043,7 @@ impl ShrAssign<u8> for N16 {
     }
 }
 
-impl std::ops::Div for N16 {
+impl Div for N16 {
     type Output = N16;
 
     fn div(self, other: N16) -> N16 {
@@ -1087,7 +1090,7 @@ impl BitwiseReverse for N16 {
 }
 
 impl Display for N16 {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "{}", u16::from(*self))
     }
 }
@@ -1120,7 +1123,7 @@ impl BitCount for N32 {
 }
 
 impl Display for N32 {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "{}", u32::from(*self))
     }
 }
@@ -1153,7 +1156,7 @@ impl Add for N32 {
     type Output = Self;
 
     fn add(self, other: Self) -> Self {
-        (u32::from(self).wrapping_add(u32::from(other))).into()
+        u32::from(self).wrapping_add(u32::from(other)).into()
     }
 }
 
@@ -1161,7 +1164,7 @@ impl Sub for N32 {
     type Output = Self;
 
     fn sub(self, other: Self) -> Self {
-        (u32::from(self).wrapping_sub(u32::from(other))).into()
+        u32::from(self).wrapping_sub(u32::from(other)).into()
     }
 }
 
@@ -1181,7 +1184,7 @@ impl Mul for N32 {
     type Output = Self;
 
     fn mul(self, other: Self) -> Self {
-        (u32::from(self).wrapping_mul(u32::from(other))).into()
+        u32::from(self).wrapping_mul(u32::from(other)).into()
     }
 }
 
@@ -1255,7 +1258,7 @@ impl Add for N64 {
     type Output = Self;
 
     fn add(self, other: Self) -> Self {
-        (u64::from(self).wrapping_add(u64::from(other))).into()
+        u64::from(self).wrapping_add(u64::from(other)).into()
     }
 }
 
@@ -1263,7 +1266,7 @@ impl Sub for N64 {
     type Output = Self;
 
     fn sub(self, other: Self) -> Self {
-        (u64::from(self).wrapping_sub(u64::from(other))).into()
+        u64::from(self).wrapping_sub(u64::from(other)).into()
     }
 }
 
@@ -1271,7 +1274,7 @@ impl Mul for N64 {
     type Output = Self;
 
     fn mul(self, other: Self) -> Self {
-        (u64::from(self).wrapping_mul(u64::from(other))).into()
+        u64::from(self).wrapping_mul(u64::from(other)).into()
     }
 }
 
@@ -1336,35 +1339,35 @@ impl From<Z8> for i8 {
 impl Add for Z8 {
     type Output = Self;
     fn add(self, rhs: Self) -> Self::Output {
-        (i8::from(self).wrapping_add(i8::from(rhs))).into()
+        i8::from(self).wrapping_add(i8::from(rhs)).into()
     }
 }
 
 impl Sub for Z8 {
     type Output = Self;
     fn sub(self, rhs: Self) -> Self::Output {
-        (i8::from(self).wrapping_sub(i8::from(rhs))).into()
+        i8::from(self).wrapping_sub(i8::from(rhs)).into()
     }
 }
 
 impl Mul for Z8 {
     type Output = Self;
     fn mul(self, rhs: Self) -> Self::Output {
-        (i8::from(self).wrapping_mul(i8::from(rhs))).into()
+        i8::from(self).wrapping_mul(i8::from(rhs)).into()
     }
 }
 
 impl Div for Z8 {
     type Output = Self;
     fn div(self, rhs: Self) -> Self::Output {
-        (i8::from(self).wrapping_div(i8::from(rhs))).into()
+        i8::from(self).wrapping_div(i8::from(rhs)).into()
     }
 }
 
 impl Rem for Z8 {
     type Output = Self;
     fn rem(self, rhs: Self) -> Self::Output {
-        (i8::from(self).wrapping_rem(i8::from(rhs))).into()
+        i8::from(self).wrapping_rem(i8::from(rhs)).into()
     }
 }
 
@@ -1380,7 +1383,6 @@ impl Display for Z8 {
         write!(f, "{}", i8::from(*self))
     }
 }
-
 
 // --------------------- Z16 ---------------------
 
@@ -1417,35 +1419,35 @@ impl From<Z16> for i16 {
 impl Add for Z16 {
     type Output = Self;
     fn add(self, rhs: Self) -> Self::Output {
-        (i16::from(self).wrapping_add(i16::from(rhs))).into()
+        i16::from(self).wrapping_add(i16::from(rhs)).into()
     }
 }
 
 impl Sub for Z16 {
     type Output = Self;
     fn sub(self, rhs: Self) -> Self::Output {
-        (i16::from(self).wrapping_sub(i16::from(rhs))).into()
+        i16::from(self).wrapping_sub(i16::from(rhs)).into()
     }
 }
 
 impl Mul for Z16 {
     type Output = Self;
     fn mul(self, rhs: Self) -> Self::Output {
-        (i16::from(self).wrapping_mul(i16::from(rhs))).into()
+        i16::from(self).wrapping_mul(i16::from(rhs)).into()
     }
 }
 
 impl Div for Z16 {
     type Output = Self;
     fn div(self, rhs: Self) -> Self::Output {
-        (i16::from(self).wrapping_div(i16::from(rhs))).into()
+        i16::from(self).wrapping_div(i16::from(rhs)).into()
     }
 }
 
 impl Rem for Z16 {
     type Output = Self;
     fn rem(self, rhs: Self) -> Self::Output {
-        (i16::from(self).wrapping_rem(i16::from(rhs))).into()
+        i16::from(self).wrapping_rem(i16::from(rhs)).into()
     }
 }
 
@@ -1497,35 +1499,35 @@ impl From<Z32> for i32 {
 impl Add for Z32 {
     type Output = Self;
     fn add(self, rhs: Self) -> Self::Output {
-        (i32::from(self).wrapping_add(i32::from(rhs))).into()
+        i32::from(self).wrapping_add(i32::from(rhs)).into()
     }
 }
 
 impl Sub for Z32 {
     type Output = Self;
     fn sub(self, rhs: Self) -> Self::Output {
-        (i32::from(self).wrapping_sub(i32::from(rhs))).into()
+        i32::from(self).wrapping_sub(i32::from(rhs)).into()
     }
 }
 
 impl Mul for Z32 {
     type Output = Self;
     fn mul(self, rhs: Self) -> Self::Output {
-        (i32::from(self).wrapping_mul(i32::from(rhs))).into()
+        i32::from(self).wrapping_mul(i32::from(rhs)).into()
     }
 }
 
 impl Div for Z32 {
     type Output = Self;
     fn div(self, rhs: Self) -> Self::Output {
-        (i32::from(self).wrapping_div(i32::from(rhs))).into()
+        i32::from(self).wrapping_div(i32::from(rhs)).into()
     }
 }
 
 impl Rem for Z32 {
     type Output = Self;
     fn rem(self, rhs: Self) -> Self::Output {
-        (i32::from(self).wrapping_rem(i32::from(rhs))).into()
+        i32::from(self).wrapping_rem(i32::from(rhs)).into()
     }
 }
 
@@ -1577,35 +1579,35 @@ impl From<Z64> for i64 {
 impl Add for Z64 {
     type Output = Self;
     fn add(self, rhs: Self) -> Self::Output {
-        (i64::from(self).wrapping_add(i64::from(rhs))).into()
+        i64::from(self).wrapping_add(i64::from(rhs)).into()
     }
 }
 
 impl Sub for Z64 {
     type Output = Self;
     fn sub(self, rhs: Self) -> Self::Output {
-        (i64::from(self).wrapping_sub(i64::from(rhs))).into()
+        i64::from(self).wrapping_sub(i64::from(rhs)).into()
     }
 }
 
 impl Mul for Z64 {
     type Output = Self;
     fn mul(self, rhs: Self) -> Self::Output {
-        (i64::from(self).wrapping_mul(i64::from(rhs))).into()
+        i64::from(self).wrapping_mul(i64::from(rhs)).into()
     }
 }
 
 impl Div for Z64 {
     type Output = Self;
     fn div(self, rhs: Self) -> Self::Output {
-        (i64::from(self).wrapping_div(i64::from(rhs))).into()
+        i64::from(self).wrapping_div(i64::from(rhs)).into()
     }
 }
 
 impl Rem for Z64 {
     type Output = Self;
     fn rem(self, rhs: Self) -> Self::Output {
-        (i64::from(self).wrapping_rem(i64::from(rhs))).into()
+        i64::from(self).wrapping_rem(i64::from(rhs)).into()
     }
 }
 
