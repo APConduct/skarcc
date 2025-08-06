@@ -1843,3 +1843,148 @@ impl Display for R64 {
         write!(f, "{}", f64::from(*self))
     }
 }
+
+// Fixed-point number
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct FixedPoint<T, const FRACT_BITS: u8> {
+    internal: T
+}
+
+impl<T, const FRACT_BITS: u8> FixedPoint<T, FRACT_BITS> {
+    pub fn new(value: T) -> Self {
+        Self { internal: value }
+    }
+}
+
+impl<T, const FRACT_BITS: u8> Add for FixedPoint<T, FRACT_BITS> where T: Add<Output=T> {
+    type Output = Self;
+    fn add(self, rhs: Self) -> Self::Output {
+        let res_internal = self.internal + rhs.internal;
+        Self {internal: res_internal}
+    }
+}
+
+impl<T, const FRAC_BITS: u8> Sub for FixedPoint<T, FRAC_BITS> where T: Sub<Output=T> {
+    type Output = Self;
+    fn sub(self, rhs: Self) -> Self::Output {
+        let res_internal = self.internal - rhs.internal;
+        Self {internal: res_internal}
+    }
+}
+
+impl<T, const FRAC_BITS: u8> Mul for FixedPoint<T, FRAC_BITS> where T: Mul<Output=T> {
+    type Output = Self;
+    fn mul(self, rhs: Self) -> Self::Output {
+        let res_internal = self.internal * rhs.internal;
+        Self {internal: res_internal}
+    }
+}
+
+impl<T, const FRAC_BITS: u8> Div for FixedPoint<T, FRAC_BITS> where T: Div<Output=T> {
+    type Output = Self;
+    fn div(self, rhs: Self) -> Self::Output {
+        let res_internal = self.internal / rhs.internal;
+        Self {internal: res_internal}
+    }
+}
+
+impl Shl<u8> for Z32 {
+    type Output = Self;
+    fn shl(self, rhs: u8) -> Self::Output {
+        (i32::from(self) << rhs).into()
+    }
+}
+
+// Implement From with generic type
+impl From<Z32> for FixedPoint<Z32, 16> {
+    fn from(value: Z32) -> Self {
+        let as_z32 = Z32::from(value);
+        let scaled_val = as_z32 << 16;
+        Self {internal: scaled_val}
+    }
+}
+
+impl Default for Z32 {
+    fn default() -> Self {
+        Z32 { bits: [Bit::Zero; 32] }
+    }
+}
+
+impl Shr<u8> for Z32 {
+    type Output = Self;
+    fn shr(self, rhs: u8) -> Self::Output {
+        (i32::from(self) << rhs).into()
+    }
+}
+
+impl From<Z32> for Z64 {
+    fn from(value: Z32) -> Self {
+        Z64::try_from(value).unwrap()
+    }
+}
+
+impl From<Z64> for Z32 {
+    fn from(value: Z64) -> Self {
+        Z32::try_from(value).unwrap()
+    }
+}
+
+impl Default for Z64 {
+    fn default() -> Self {
+        Z64 { bits: [Bit::Zero; 64] }
+    }
+}
+
+impl Default for Z8 {
+    fn default() -> Self {
+        Z8 { bits: [Bit::Zero; 8] }
+    }
+}
+
+impl Default for Z16 {
+    fn default() -> Self {
+        Z16 { bits: [Bit::Zero; 16] }
+    }
+}
+
+impl Default for N8 {
+    fn default() -> Self {
+        N8 { bits: [Bit::Zero; 8] }
+    }
+}
+
+impl Default for N16 {
+    fn default() -> Self {
+        N16 { bits: [Bit::Zero; 16] }
+    }
+}
+
+impl Default for N32 {
+    fn default() -> Self {
+        N32 { bits: [Bit::Zero; 32] }
+    }
+}
+
+impl Default for N64 {
+    fn default() -> Self {
+         N64 { bits: [Bit::Zero; 64] }
+    }
+}
+
+impl Default for R32 {
+    fn default() -> Self {
+        R32 { bits: [Bit::Zero; 32] }
+    }
+}
+
+impl Default for R64 {
+    fn default() -> Self {
+        R64 { bits: [Bit::Zero; 64] }
+    }
+}
+
+impl<T, const FB: u8> Default for FixedPoint<T, FB> where T: Default{
+    fn default() -> Self {
+        FixedPoint {internal: T::default()}
+    }
+}
