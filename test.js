@@ -10,22 +10,21 @@ let _6 = _5 + _true;
 let _7 = _6 + _true;
 let empty_string = [] + [];
 let _undefined = [][[]];
-let to__string = (x) => x + [];
-let _u = to__string(_undefined)[_0];
-let _n = to__string(_undefined)[_1];
-let _d = to__string(_undefined)[_2];
-let _e = to__string(_undefined)[_3];
-let _f = to__string(_undefined)[_4];
-let _i = to__string(_undefined)[_5];
-let _t = to__string(_true)[_0];
-let _a = to__string(_false)[_1];
+let _u = ([] + _undefined)[_0];
+let _n = ([] + _undefined)[_1];
+let _d = ([] + _undefined)[_2];
+let _e = ([] + _undefined)[_3];
+let _f = ([] + _undefined)[_4];
+let _i = ([] + _undefined)[_5];
+let _t = ([] + _true)[_0];
+let _a = ([] + _false)[_1];
 let _at = _a + _t;
 let _o = (_true + [][_at])[_1 + [_0]];
 let _c = ([][_at] + [])[_3];
-let _r = to__string(_true)[_1];
-let _s = to__string(_false)[_3];
+let _r = ([] + _true)[_1];
+let _s = ([] + _false)[_3];
 let _space = (+[_false] + [][_at])[_1 + [_1]];
-let _l = to__string(_false)[_2];
+let _l = ([] + _false)[_2];
 let _31 = +(_3 + [_1]);
 let _fontcolor = _f + _o + _n + _t + _c + _o + _l + _o + _r;
 let _constructor = _c + _o + _n + _s + _t + _r + _u + _c + _t + _o + _r;
@@ -101,65 +100,6 @@ let _t_escaped_console_log =
   [_1];
 let _BS_escaped_console_log =
   _t_escaped_console_log[_split](_t)[_join](_B_SLASH);
-console.log(
-  ([][_at][_constructor](_return + _F_SLASH + _false + _F_SLASH)()[
-    _constructor
-  ](_F_SLASH) + [])[_1],
-);
-console.log(
-  _t +
-    [_1] +
-    [_4] +
-    [_3] +
-    _t +
-    [_1] +
-    [_5] +
-    [_7] +
-    _n +
-    _s +
-    _t +
-    [_1] +
-    [_5] +
-    [_7] +
-    _l +
-    _e +
-    _DOT +
-    _l +
-    _t +
-    [_1] +
-    [_5] +
-    [_7] +
-    _t +
-    [_1] +
-    [_4] +
-    [_7] +
-    _t +
-    [_5] +
-    [_0] +
-    _t +
-    [_4] +
-    [_7] +
-    _t +
-    [_1] +
-    [_5] +
-    [_0] +
-    _e +
-    _l +
-    _l +
-    _t +
-    [_1] +
-    [_5] +
-    [_7] +
-    _t +
-    [_4] +
-    [_7] +
-    _t +
-    [_5] +
-    [_1],
-);
-console.log(String(/false/.constructor("/")));
-console.log([][_at][_constructor](_return + _F_SLASH + _false + _F_SLASH)());
-console.log(_str_quote + _BS_escaped_console_log + _str_quote);
 [][_at][_constructor](_return + _space + _eval)()(
   [][_at][_constructor](
     _return + _str_quote + _BS_escaped_console_log + _str_quote,
