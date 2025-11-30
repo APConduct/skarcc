@@ -1,4 +1,3 @@
-
 //! karcc - Bitwise and numeric types for custom arithmetic and logic operations.
 //!
 //! This module provides custom types for bits, bytes, nibbles, words, and various
@@ -450,7 +449,59 @@ impl Bool {
     pub fn new(value: bool) -> Bool {
         if value { Bool::True } else { Bool::False }
     }
+}
 
+impl PartialEq<bool> for Bool {
+    fn eq(&self, other: &bool) -> bool {
+        match self {
+            Bool::True => *other,
+            Bool::False => !*other,
+        }
+    }
+}
+
+impl PartialEq<Bool> for bool {
+    fn eq(&self, other: &Bool) -> bool {
+        match other {
+            Bool::True => *self,
+            Bool::False => !*self,
+        }
+    }
+}
+
+impl std::ops::BitAnd<bool> for Bool {
+    type Output = Bool;
+
+    fn bitand(self, rhs: bool) -> Self::Output {
+        if let Bool::True = self {
+            Bool::new(rhs)
+        } else {
+            Bool::False
+        }
+    }
+}
+
+impl std::ops::BitOr<bool> for Bool {
+    type Output = Bool;
+
+    fn bitor(self, rhs: bool) -> Self::Output {
+        if let Bool::False = self {
+            Bool::new(rhs)
+        } else {
+            Bool::True
+        }
+    }
+}
+
+impl std::ops::BitXor<bool> for Bool {
+    type Output = Bool;
+
+    fn bitxor(self, rhs: bool) -> Self::Output {
+        Bool::new((self == Bool::True) ^ rhs)
+    }
+}
+
+impl Bool {
     /// Logical NOT.
     pub fn not(&self) -> Bool {
         match self {
@@ -1847,7 +1898,7 @@ impl Display for R64 {
 // Fixed-point number
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct FixedPoint<T, const FRACT_BITS: u8> {
-    internal: T
+    internal: T,
 }
 
 impl<T, const FRACT_BITS: u8> FixedPoint<T, FRACT_BITS> {
@@ -1856,35 +1907,55 @@ impl<T, const FRACT_BITS: u8> FixedPoint<T, FRACT_BITS> {
     }
 }
 
-impl<T, const FRACT_BITS: u8> Add for FixedPoint<T, FRACT_BITS> where T: Add<Output=T> {
+impl<T, const FRACT_BITS: u8> Add for FixedPoint<T, FRACT_BITS>
+where
+    T: Add<Output = T>,
+{
     type Output = Self;
     fn add(self, rhs: Self) -> Self::Output {
         let res_internal = self.internal + rhs.internal;
-        Self {internal: res_internal}
+        Self {
+            internal: res_internal,
+        }
     }
 }
 
-impl<T, const FRAC_BITS: u8> Sub for FixedPoint<T, FRAC_BITS> where T: Sub<Output=T> {
+impl<T, const FRAC_BITS: u8> Sub for FixedPoint<T, FRAC_BITS>
+where
+    T: Sub<Output = T>,
+{
     type Output = Self;
     fn sub(self, rhs: Self) -> Self::Output {
         let res_internal = self.internal - rhs.internal;
-        Self {internal: res_internal}
+        Self {
+            internal: res_internal,
+        }
     }
 }
 
-impl<T, const FRAC_BITS: u8> Mul for FixedPoint<T, FRAC_BITS> where T: Mul<Output=T> {
+impl<T, const FRAC_BITS: u8> Mul for FixedPoint<T, FRAC_BITS>
+where
+    T: Mul<Output = T>,
+{
     type Output = Self;
     fn mul(self, rhs: Self) -> Self::Output {
         let res_internal = self.internal * rhs.internal;
-        Self {internal: res_internal}
+        Self {
+            internal: res_internal,
+        }
     }
 }
 
-impl<T, const FRAC_BITS: u8> Div for FixedPoint<T, FRAC_BITS> where T: Div<Output=T> {
+impl<T, const FRAC_BITS: u8> Div for FixedPoint<T, FRAC_BITS>
+where
+    T: Div<Output = T>,
+{
     type Output = Self;
     fn div(self, rhs: Self) -> Self::Output {
         let res_internal = self.internal / rhs.internal;
-        Self {internal: res_internal}
+        Self {
+            internal: res_internal,
+        }
     }
 }
 
@@ -1900,13 +1971,17 @@ impl From<Z32> for FixedPoint<Z32, 16> {
     fn from(value: Z32) -> Self {
         let as_z32 = Z32::from(value);
         let scaled_val = as_z32 << 16;
-        Self {internal: scaled_val}
+        Self {
+            internal: scaled_val,
+        }
     }
 }
 
 impl Default for Z32 {
     fn default() -> Self {
-        Z32 { bits: [Bit::Zero; 32] }
+        Z32 {
+            bits: [Bit::Zero; 32],
+        }
     }
 }
 
@@ -1931,60 +2006,257 @@ impl From<Z64> for Z32 {
 
 impl Default for Z64 {
     fn default() -> Self {
-        Z64 { bits: [Bit::Zero; 64] }
+        Z64 {
+            bits: [Bit::Zero; 64],
+        }
     }
 }
 
 impl Default for Z8 {
     fn default() -> Self {
-        Z8 { bits: [Bit::Zero; 8] }
+        Z8 {
+            bits: [Bit::Zero; 8],
+        }
     }
 }
 
 impl Default for Z16 {
     fn default() -> Self {
-        Z16 { bits: [Bit::Zero; 16] }
+        Z16 {
+            bits: [Bit::Zero; 16],
+        }
     }
 }
 
 impl Default for N8 {
     fn default() -> Self {
-        N8 { bits: [Bit::Zero; 8] }
+        N8 {
+            bits: [Bit::Zero; 8],
+        }
     }
 }
 
 impl Default for N16 {
     fn default() -> Self {
-        N16 { bits: [Bit::Zero; 16] }
+        N16 {
+            bits: [Bit::Zero; 16],
+        }
     }
 }
 
 impl Default for N32 {
     fn default() -> Self {
-        N32 { bits: [Bit::Zero; 32] }
+        N32 {
+            bits: [Bit::Zero; 32],
+        }
     }
 }
 
 impl Default for N64 {
     fn default() -> Self {
-         N64 { bits: [Bit::Zero; 64] }
+        N64 {
+            bits: [Bit::Zero; 64],
+        }
     }
 }
 
 impl Default for R32 {
     fn default() -> Self {
-        R32 { bits: [Bit::Zero; 32] }
+        R32 {
+            bits: [Bit::Zero; 32],
+        }
     }
 }
 
 impl Default for R64 {
     fn default() -> Self {
-        R64 { bits: [Bit::Zero; 64] }
+        R64 {
+            bits: [Bit::Zero; 64],
+        }
     }
 }
 
-impl<T, const FB: u8> Default for FixedPoint<T, FB> where T: Default{
+impl<T, const FB: u8> Default for FixedPoint<T, FB>
+where
+    T: Default,
+{
     fn default() -> Self {
-        FixedPoint {internal: T::default()}
+        FixedPoint {
+            internal: T::default(),
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+
+    fn test_bit_enum() {
+        assert_eq!(Bit::Zero.as_bool() == Bool::False, true);
+
+        assert_eq!(Bit::One.as_bool() == Bool::True, true);
+
+        assert_eq!(Bit::from_bool(Bool::False), Bit::Zero);
+
+        assert_eq!(Bit::from_bool(Bool::True), Bit::One);
+
+        assert!(Bit::Zero.is_zero() == Bool::True);
+
+        assert!(Bit::Zero.is_one() == Bool::False);
+
+        assert!(Bit::One.is_one() == Bool::True);
+
+        assert!(Bit::One.is_zero() == Bool::False);
+    }
+
+    #[test]
+    fn test_byte_struct() {
+        let mut byte = Byte::new([Bit::Zero; 8]);
+        assert_eq!(byte.get_bit(0), Bit::Zero);
+
+        byte.set_bit(0, Bit::One);
+        assert_eq!(byte.get_bit(0), Bit::One);
+
+        byte.invert();
+        assert_eq!(byte.get_bit(0), Bit::Zero);
+    }
+
+    #[test]
+    fn test_nibble_struct() {
+        let nibble = Nibble::new([Bit::Zero, Bit::One, Bit::Zero, Bit::One]);
+
+        assert_eq!(nibble.bits, [Bit::Zero, Bit::One, Bit::Zero, Bit::One]);
+
+        let max = Nibble::MAX;
+
+        assert_eq!(max.bits, [Bit::One, Bit::One, Bit::One, Bit::One]);
+
+        let zero = Nibble::ZERO;
+
+        assert_eq!(zero.bits, [Bit::Zero, Bit::Zero, Bit::Zero, Bit::Zero]);
+    }
+
+    #[test]
+    fn test_n8_struct() {
+        let n8 = N8::new([
+            Bit::One,
+            Bit::Zero,
+            Bit::One,
+            Bit::Zero,
+            Bit::One,
+            Bit::Zero,
+            Bit::One,
+            Bit::Zero,
+        ]);
+        assert_eq!(
+            n8.bits,
+            [
+                Bit::One,
+                Bit::Zero,
+                Bit::One,
+                Bit::Zero,
+                Bit::One,
+                Bit::Zero,
+                Bit::One,
+                Bit::Zero
+            ]
+        );
+
+        assert_eq!(N8::MAX.bits, [Bit::One; 8]);
+        assert_eq!(N8::ZERO.bits, [Bit::Zero; 8]);
+    }
+
+    #[test]
+    fn test_bitwise_operations() {
+        let a = Bit::One;
+        let b = Bit::Zero;
+
+        assert_eq!(a.and(&b), Bit::Zero);
+
+        assert_eq!(a.or(&b), Bit::One);
+
+        assert_eq!(a.xor(&b), Bit::One);
+
+        assert_eq!(a.nand(&b), Bit::One);
+
+        assert_eq!(a.nor(&b), Bit::Zero);
+
+        assert_eq!(a.xnor(&b), Bit::Zero);
+    }
+
+    #[test]
+    fn test_bitwise_rotate() {
+        let mut n8 = N8::new([
+            Bit::One,
+            Bit::Zero,
+            Bit::One,
+            Bit::Zero,
+            Bit::One,
+            Bit::Zero,
+            Bit::One,
+            Bit::Zero,
+        ]);
+
+        n8.rotate_left(1);
+        assert_eq!(
+            n8.bits,
+            [
+                Bit::Zero,
+                Bit::One,
+                Bit::Zero,
+                Bit::One,
+                Bit::Zero,
+                Bit::One,
+                Bit::Zero,
+                Bit::One
+            ]
+        );
+
+        n8.rotate_right(1);
+        assert_eq!(
+            n8.bits,
+            [
+                Bit::One,
+                Bit::Zero,
+                Bit::One,
+                Bit::Zero,
+                Bit::One,
+                Bit::Zero,
+                Bit::One,
+                Bit::Zero
+            ]
+        );
+    }
+
+    #[test]
+    fn test_bit_count() {
+        let n8 = N8::new([
+            Bit::One,
+            Bit::Zero,
+            Bit::One,
+            Bit::Zero,
+            Bit::One,
+            Bit::Zero,
+            Bit::One,
+            Bit::Zero,
+        ]);
+        assert_eq!(n8.count_ones(), 4);
+        assert_eq!(n8.count_zeros(), 4);
+    }
+
+    #[test]
+    fn test_display_trait() {
+        let bit = Bit::One;
+        assert_eq!(format!("{}", bit), "1");
+
+        let byte = Byte::new([Bit::Zero; 8]);
+
+        assert_eq!(format!("{}", byte), "00000000");
+
+        let nibble = Nibble::new([Bit::Zero, Bit::One, Bit::Zero, Bit::One]);
+
+        assert_eq!(format!("{}", nibble), "1010");
     }
 }
